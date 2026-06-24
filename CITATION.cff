@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Surface-Code Decoder Benchmark"
+abstract: "A benchmarking framework for surface-code decoders: MWPM, union-find and belief propagation compared on accuracy, runtime and memory."
+type: software
+authors:
+  - family-names: "Fogelis"
+    given-names: "Andrew"
+version: "0.1.0"
+date-released: "2026-06-23"
+license: MIT
+repository-code: "https://github.com/afogelis/decoder-benchmark"
+keywords:
+  - quantum-error-correction
+  - decoder
+  - mwpm
+  - union-find
+  - belief-propagation
+  - benchmark

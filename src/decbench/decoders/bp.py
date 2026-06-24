@@ -51,9 +51,7 @@ class BeliefPropagationDecoder:
         checks, variables = np.nonzero(matrices.check_matrix)
         self._check_of_edge = checks.astype(np.int64)
         self._var_of_edge = variables.astype(np.int64)
-        self._var_edges = [
-            np.nonzero(self._var_of_edge == var)[0] for var in range(self._num_vars)
-        ]
+        self._var_edges = [np.nonzero(self._var_of_edge == var)[0] for var in range(self._num_vars)]
 
     def decode_batch(self, detection_events: np.ndarray) -> np.ndarray:
         if self._check_matrix is None or self._observable_matrix is None:

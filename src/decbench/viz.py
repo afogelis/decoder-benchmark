@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.axes import Axes
 
 from .leaderboard import build_leaderboard
@@ -51,7 +50,9 @@ def plot_accuracy_vs_p(result: BenchmarkResult, *, distance: int, ax: Axes | Non
         )
         if not rows:
             continue
-        ax.plot([r.p for r in rows], [r.logical_error_rate for r in rows], marker="o", label=decoder)
+        ax.plot(
+            [r.p for r in rows], [r.logical_error_rate for r in rows], marker="o", label=decoder
+        )
 
     ax.set_xscale("log")
     ax.set_yscale("log")

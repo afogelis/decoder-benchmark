@@ -49,7 +49,9 @@ class DecoderProfile:
         return 1e6 * self.wall_seconds / self.shots if self.shots else float("nan")
 
 
-def profile_decode(decoder: Decoder, detection_events: np.ndarray) -> tuple[np.ndarray, DecoderProfile]:
+def profile_decode(
+    decoder: Decoder, detection_events: np.ndarray
+) -> tuple[np.ndarray, DecoderProfile]:
     """Time and memory-profile a decode, returning ``(predictions, profile)``.
 
     Peak memory is measured with :mod:`tracemalloc` so it reflects Python-level

@@ -211,10 +211,10 @@ class UnionFindDecoder:
             node = queue.popleft()
             if self._is_boundary[node]:
                 return node
-            for neighbour, _ in adjacency[node]:
-                if neighbour not in seen:
-                    seen.add(neighbour)
-                    queue.append(neighbour)
+            for neighbor, _ in adjacency[node]:
+                if neighbor not in seen:
+                    seen.add(neighbor)
+                    queue.append(neighbor)
         return seed
 
     def _spanning_tree(
@@ -231,10 +231,10 @@ class UnionFindDecoder:
         while queue:
             node = queue.popleft()
             order.append(node)
-            for neighbour, edge_id in adjacency[node]:
-                if not visited[neighbour]:
-                    visited[neighbour] = True
-                    parent_edge[neighbour] = edge_id
-                    parent_node[neighbour] = node
-                    queue.append(neighbour)
+            for neighbor, edge_id in adjacency[node]:
+                if not visited[neighbor]:
+                    visited[neighbor] = True
+                    parent_edge[neighbor] = edge_id
+                    parent_node[neighbor] = node
+                    queue.append(neighbor)
         return order, parent_edge, parent_node

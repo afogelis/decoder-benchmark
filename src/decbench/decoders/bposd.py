@@ -9,7 +9,7 @@ competitive with matching, and it is the workhorse decoder for quantum LDPC
 codes.
 
 Rather than reimplement OSD by hand, this wrapper uses Joschka Roffe's
-optimised ``ldpc`` package as a *reference* BP-OSD decoder. It is an optional
+optimized ``ldpc`` package as a *reference* BP-OSD decoder. It is an optional
 dependency (``pip install 'decoder-benchmark[optimized]'``); the decoder is
 only registered when ``ldpc`` is importable, so the core benchmark still works
 on interpreters where ``ldpc`` has no wheel (e.g. very new CPython versions).

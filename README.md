@@ -50,14 +50,14 @@ reports two tiers:
 The union-find and belief-propagation decoders are implemented directly (no compiled decoder
 libraries) so the benchmark can expose *why* each algorithm wins or loses, not just call a black
 box. They are deliberately pedagogical: the scientific claim about them is about **accuracy**, not
-speed. The optional `bposd` decoder uses the optimised `ldpc` package as a fair, compiled BP-OSD
+speed. The optional `bposd` decoder uses the optimized `ldpc` package as a fair, compiled BP-OSD
 reference so that "BP is bad on the surface code" is not mistaken for "this repo's BP is bad" --
 plain BP is dominated, but BP-OSD is competitive.
 
 ## What this demonstrates
 
 - **Algorithms:** a correct, self-contained union-find decoder (disjoint-set growth + peeling) and a log-domain BP decoder.
-- **Benchmarking discipline:** shared syndrome batches, a clean accuracy/runtime tier split that does not conflate algorithm quality with implementation language, accuracy/runtime/memory profiling, and an optimised BP-OSD reference for a fair comparison.
+- **Benchmarking discipline:** shared syndrome batches, a clean accuracy/runtime tier split that does not conflate algorithm quality with implementation language, accuracy/runtime/memory profiling, and an optimized BP-OSD reference for a fair comparison.
 - **A real research finding:** *plain* BP is dominated on surface codes by matching because of graph degeneracy and short cycles; adding ordered-statistics post-processing (BP-OSD, the `bposd` decoder) recovers competitive accuracy. This reproduces the consensus in the decoder literature.
 
 ## Install
@@ -80,7 +80,7 @@ pytest
 python examples/run_benchmark.py     # writes outputs/{benchmark.json,accuracy_tier.png,pareto.png,accuracy_vs_p_d5.png}
 ```
 
-To include the optimised BP-OSD reference decoder (where `ldpc` has a wheel, i.e. Python <= 3.13):
+To include the optimized BP-OSD reference decoder (where `ldpc` has a wheel, i.e. Python <= 3.13):
 
 ```bash
 pip install -e ".[optimized]"

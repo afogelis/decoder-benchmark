@@ -2,7 +2,7 @@
 
 MWPM is the community-standard surface-code decoder and serves as the accuracy
 reference all other decoders are measured against. PyMatching implements a
-heavily optimised blossom algorithm in C++, so it is also a strong runtime
+heavily optimized blossom algorithm in C++, so it is also a strong runtime
 baseline.
 """
 

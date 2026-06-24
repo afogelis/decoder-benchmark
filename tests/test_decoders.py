@@ -10,6 +10,8 @@ from surfacecode.circuits import build_surface_code_circuit
 from surfacecode.sampling import sample_syndromes
 from surfacecode.types import ExperimentConfig
 
+from decbench.decoders import ldpc_is_available
+from decbench.leaderboard import backend_of
 from decbench.registry import available_decoders, get_decoder
 
 DECODERS = ["mwpm", "union_find", "bp"]
@@ -90,3 +92,22 @@ def test_union_find_tracks_mwpm_below_threshold():
         results[name] = np.count_nonzero(mismatches) / sample.num_shots
     # Union-find is never expected to beat MWPM by much; allow a generous margin.
     assert results["union_find"] <= results["mwpm"] + 0.01
+
+
+def test_backend_classification_splits_compiled_and_python():
+    # Accuracy is comparable across all; runtime only within a backend tier.
+    assert "compiled" in backend_of("mwpm")
+    assert "Python" in backend_of("union_find")
+    assert "Python" in backend_of("bp")
+
+
+@pytest.mark.skipif(not ldpc_is_available(), reason="optional 'ldpc' package not installed")
+def test_bposd_registered_and_decodes_when_ldpc_available():
+    assert "bposd" in available_decoders()
+    assert "compiled" in backend_of("bposd")
+    circuit, sample = _sample()
+    decoder = get_decoder("bposd")
+    decoder.fit(circuit)
+    predictions = decoder.decode_batch(sample.detection_events)
+    assert predictions.shape == (sample.num_shots, sample.num_observables)
+    assert predictions.dtype == bool

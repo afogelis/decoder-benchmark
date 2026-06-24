@@ -32,6 +32,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "jupyter>=1.0", "nbformat>=5.9", "ruff>=0.6"]
+# Optional optimized reference decoders. 'ldpc' (BP-OSD) has no wheels on the
+# newest CPython releases, so it is kept out of the default install.
+optimized = ["ldpc>=2.1"]
 
 [project.scripts]
 decbench = "decbench.cli:main"

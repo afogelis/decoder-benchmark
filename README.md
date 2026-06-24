@@ -12,32 +12,53 @@ and we measure which model wins under a latency and accuracy budget.
 This is repo 2 of a seven-part [QEC research portfolio](https://github.com/afogelis/qec-portfolio) and builds on
 [`surface-code-simulator`](https://github.com/afogelis/surface-code-simulator).
 
+## Accuracy and runtime are reported as two separate tiers
+
+A fair benchmark must not confuse *algorithm quality* with *implementation language*. This repo
+reports two tiers:
+
+- **Accuracy tier (the scientific result):** logical error rate, directly comparable across every
+  decoder because they all decode the same syndrome batch.
+- **Runtime tier (an engineering note):** speed and memory, compared *only within a backend*. A
+  from-scratch Python decoder will always lose on wall-clock to a compiled C++ library regardless
+  of its algorithm, so cross-language runtime is not a meaningful comparison and is never presented
+  as one.
+
 ## Results at a glance
 
-![Accuracy/runtime Pareto frontier for MWPM, union-find and belief propagation.](docs/pareto.png)
+![Bar chart of mean logical error rate per decoder.](docs/accuracy_tier.png)
 
-*Accuracy versus runtime. MWPM and union-find define the accuracy frontier; belief propagation is dominated on both axes.*
+*Accuracy tier. Logical error rate per decoder, comparable across all because they decode identical syndromes. Plain belief propagation is the least accurate; matching is the reference.*
 
 ![Logical error rate versus physical error rate at code distance 5 for each decoder.](docs/accuracy_vs_p_d5.png)
 
 *Logical error rate versus physical error rate at distance 5.*
 
+![Accuracy versus runtime, points grouped by implementation backend.](docs/pareto.png)
+
+*Runtime tier, grouped by backend. The horizontal axis compares only within a backend; the vertical (accuracy) axis is comparable across all. The pure-Python decoders are slower than compiled C++ by construction, which is a statement about the language, not the algorithm.*
+
 ## Decoders
 
-| Decoder | Implementation | Notes |
-|---------|----------------|-------|
-| `mwpm` | [PyMatching](https://pymatching.readthedocs.io/) (C++) | Minimum-weight perfect matching; community-standard accuracy reference. |
-| `union_find` | From scratch (this repo) | Delfosse-Nickerson cluster growth + spanning-forest peeling on the matching graph. Near-linear time. |
-| `bp` | From scratch (this repo) | Log-domain sum-product belief propagation on the detector error model. |
+| Decoder | Backend | Notes |
+|---------|---------|-------|
+| `mwpm` | compiled C++ ([PyMatching](https://pymatching.readthedocs.io/)) | Minimum-weight perfect matching; community-standard accuracy reference. |
+| `bposd` | compiled C++ ([`ldpc`](https://github.com/quantumgizmos/ldpc), optional) | Belief propagation + ordered-statistics decoding; the BP variant that is actually competitive. Installed via the `optimized` extra. |
+| `union_find` | pure Python (this repo) | Delfosse-Nickerson cluster growth + spanning-forest peeling on the matching graph. Near-linear time, written for clarity not speed. |
+| `bp` | pure Python (this repo) | Log-domain sum-product belief propagation on the detector error model, *without* OSD, to show plain BP's accuracy limit. |
 
 The union-find and belief-propagation decoders are implemented directly (no compiled decoder
-libraries) so the benchmark can expose *why* each algorithm wins or loses, not just call a black box.
+libraries) so the benchmark can expose *why* each algorithm wins or loses, not just call a black
+box. They are deliberately pedagogical: the scientific claim about them is about **accuracy**, not
+speed. The optional `bposd` decoder uses the optimised `ldpc` package as a fair, compiled BP-OSD
+reference so that "BP is bad on the surface code" is not mistaken for "this repo's BP is bad" --
+plain BP is dominated, but BP-OSD is competitive.
 
 ## What this demonstrates
 
 - **Algorithms:** a correct, self-contained union-find decoder (disjoint-set growth + peeling) and a log-domain BP decoder.
-- **Benchmarking discipline:** shared syndrome batches, accuracy/runtime/memory profiling, a ranked leaderboard, and a Pareto trade-off plot.
-- **A real research finding:** plain BP is *dominated* on surface codes by matching-based decoders because of graph degeneracy and short cycles, reproducing the consensus in the decoder literature.
+- **Benchmarking discipline:** shared syndrome batches, a clean accuracy/runtime tier split that does not conflate algorithm quality with implementation language, accuracy/runtime/memory profiling, and an optimised BP-OSD reference for a fair comparison.
+- **A real research finding:** *plain* BP is dominated on surface codes by matching because of graph degeneracy and short cycles; adding ordered-statistics post-processing (BP-OSD, the `bposd` decoder) recovers competitive accuracy. This reproduces the consensus in the decoder literature.
 
 ## Install
 
@@ -56,39 +77,49 @@ pip install -e . --no-deps
 
 ```bash
 pytest
-python examples/run_benchmark.py     # writes outputs/{benchmark.json,pareto.png,accuracy_vs_p_d5.png}
+python examples/run_benchmark.py     # writes outputs/{benchmark.json,accuracy_tier.png,pareto.png,accuracy_vs_p_d5.png}
 ```
 
+To include the optimised BP-OSD reference decoder (where `ldpc` has a wheel, i.e. Python <= 3.13):
+
 ```bash
-decbench list
-decbench run --decoders mwpm,union_find,bp --distances 3,5 --p 0.005,0.01 --shots 5000 --output outputs/run.json
+pip install -e ".[optimized]"
+decbench run --decoders mwpm,bposd,union_find,bp --distances 3,5 --p 0.005,0.01 --shots 5000 --output outputs/run.json
 ```
 
 ## Example leaderboard
 
-A representative run (distances 3 and 5; p in {0.005, 0.01}) ranks decoders by mean logical error rate:
+A representative run (distances 3 and 5; p in {0.005, 0.008, 0.01, 0.012}). The **accuracy tier**
+ranks every decoder on the same footing:
 
 ```
-decoder             mean LER       us/shot      peak KiB   points
------------------------------------------------------------------
-mwpm              4.29e-02          2.13         238.0        4
-union_find        5.77e-02       1310.62          39.4        4
-bp                9.98e-02       3210.32         403.3        4
+ACCURACY TIER (lower is better; comparable across all decoders)
+decoder            mean LER   points  backend
+mwpm             5.8550e-02        8  compiled (PyMatching, C++)
+union_find       7.6050e-02        8  pure Python (educational)
+bp               1.2712e-01        8  pure Python (educational)
 ```
 
-MWPM and union-find define the accuracy frontier (matching the literature); the pure-Python
-union-find and BP are slower than PyMatching's optimised C++, and BP is dominated on both axes.
+The **runtime tier** is reported separately and only compared within a backend, because comparing
+a pure-Python loop to compiled C++ measures the language rather than the algorithm. The scientific
+finding is the accuracy ordering above: plain BP is dominated, while matching and union-find are
+close on accuracy. Adding the optional `bposd` (BP-OSD) decoder closes BP's accuracy gap.
 
 ## Library usage
 
 ```python
-from decbench import BenchmarkConfig, run_benchmark, build_leaderboard, format_leaderboard
+from decbench import (
+    BenchmarkConfig, run_benchmark, build_leaderboard,
+    format_accuracy_tier, format_runtime_tier,
+)
 
 result = run_benchmark(BenchmarkConfig(
     decoders=["mwpm", "union_find", "bp"],
     distances=[3, 5], error_rates=[0.005, 0.01], shots=5_000, seed=2026,
 ))
-print(format_leaderboard(build_leaderboard(result)))
+rows = build_leaderboard(result)
+print(format_accuracy_tier(rows))   # comparable across all decoders
+print(format_runtime_tier(rows))    # grouped by backend
 ```
 
 ### Adding your own decoder
@@ -104,7 +135,7 @@ The companion `ml-qec-decoder` repo registers machine-learning decoders this way
 
 ## Layout
 
-- `src/decbench/decoders/` — `mwpm`, `union_find`, `bp`
+- `src/decbench/decoders/` — `mwpm`, `union_find`, `bp`, and optional `bposd` (BP-OSD via `ldpc`)
 - `src/decbench/dem_matrices.py` — detector error model to parity-check matrices
 - `src/decbench/{runner,leaderboard,viz,base,registry}.py` — framework
 - `tests/` — correctness tests on the real Stim/PyMatching stack

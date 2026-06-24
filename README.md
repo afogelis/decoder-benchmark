@@ -9,8 +9,18 @@ Think of it as trade-surveillance for quantum errors: many candidate models comp
 most likely underlying event (here, the logical error) from a stream of signals (here, syndromes),
 and we measure which model wins under a latency and accuracy budget.
 
-This is repo 2 of a seven-part [QEC research portfolio](../README.md) and builds on
+This is repo 2 of a seven-part [QEC research portfolio](https://github.com/afogelis/qec-portfolio) and builds on
 [`surface-code-simulator`](https://github.com/afogelis/surface-code-simulator).
+
+## Results at a glance
+
+![Accuracy/runtime Pareto frontier for MWPM, union-find and belief propagation.](docs/pareto.png)
+
+*Accuracy versus runtime. MWPM and union-find define the accuracy frontier; belief propagation is dominated on both axes.*
+
+![Logical error rate versus physical error rate at code distance 5 for each decoder.](docs/accuracy_vs_p_d5.png)
+
+*Logical error rate versus physical error rate at distance 5.*
 
 ## Decoders
 

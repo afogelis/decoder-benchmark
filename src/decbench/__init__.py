@@ -2,6 +2,7 @@
 
 from . import decoders  # noqa: F401  (registers built-in decoders on import)
 from .base import Decoder, DecoderProfile, profile_decode
+from .css_export import CssBenchmarkRecord, CssExport, benchmark_css_export, load_css_export
 from .dem_matrices import DemMatrices, dem_to_matrices
 from .leaderboard import (
     DECODER_BACKEND,
@@ -23,6 +24,8 @@ __all__ = [
     "DECODER_BACKEND",
     "BenchmarkConfig",
     "BenchmarkResult",
+    "CssBenchmarkRecord",
+    "CssExport",
     "Decoder",
     "DecoderProfile",
     "DemMatrices",
@@ -31,11 +34,13 @@ __all__ = [
     "available_decoders",
     "backend_of",
     "build_leaderboard",
+    "benchmark_css_export",
     "dem_to_matrices",
     "format_accuracy_tier",
     "format_leaderboard",
     "format_runtime_tier",
     "get_decoder",
+    "load_css_export",
     "plot_accuracy_tier",
     "plot_accuracy_vs_p",
     "plot_pareto",

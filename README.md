@@ -87,6 +87,13 @@ pip install -e ".[optimized]"
 decbench run --decoders mwpm,bposd,union_find,bp --distances 3,5 --p 0.005,0.01 --shots 5000 --output outputs/run.json
 ```
 
+Benchmark a qLDPC export from [`qldpc-builder`](https://github.com/afogelis/qldpc-builder):
+
+```bash
+qldpc export bb72 --output artifacts/bb72 --stim
+python examples/run_qldpc_export.py ../qldpc-builder/artifacts/bb72
+```
+
 ## Example leaderboard
 
 A representative run (distances 3 and 5; p in {0.005, 0.008, 0.01, 0.012}). The **accuracy tier**

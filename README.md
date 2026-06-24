@@ -9,7 +9,7 @@ Think of it as trade-surveillance for quantum errors: many candidate models comp
 most likely underlying event (here, the logical error) from a stream of signals (here, syndromes),
 and we measure which model wins under a latency and accuracy budget.
 
-This is repo 2 of a seven-part [QEC research portfolio](https://github.com/afogelis/qec-portfolio) and builds on
+This is repo 2 of a ten-part [QEC research portfolio](https://github.com/afogelis/qec-portfolio) and builds on
 [`surface-code-simulator`](https://github.com/afogelis/surface-code-simulator).
 
 ## Accuracy and runtime are reported as two separate tiers

@@ -54,11 +54,11 @@ speed. The optional `bposd` decoder uses the optimized `ldpc` package as a fair,
 reference so that "BP is bad on the surface code" is not mistaken for "this repo's BP is bad" --
 plain BP is dominated, but BP-OSD is competitive.
 
-## What this demonstrates
+## Scope
 
-- **Algorithms:** a correct, self-contained union-find decoder (disjoint-set growth + peeling) and a log-domain BP decoder.
-- **Benchmarking discipline:** shared syndrome batches, a clean accuracy/runtime tier split that does not conflate algorithm quality with implementation language, accuracy/runtime/memory profiling, and an optimized BP-OSD reference for a fair comparison.
-- **A real research finding:** *plain* BP is dominated on surface codes by matching because of graph degeneracy and short cycles; adding ordered-statistics post-processing (BP-OSD, the `bposd` decoder) recovers competitive accuracy. This reproduces the consensus in the decoder literature.
+- **Algorithms:** a self-contained union-find decoder (disjoint-set growth + peeling) and a log-domain BP decoder.
+- **Benchmarking method:** shared syndrome batches, a separate accuracy/runtime tier split that does not conflate algorithm quality with implementation language, accuracy/runtime/memory profiling, and an optimized BP-OSD reference for comparison.
+- **Research finding:** *plain* BP is dominated on surface codes by matching because of graph degeneracy and short cycles; adding ordered-statistics post-processing (BP-OSD, the `bposd` decoder) recovers competitive accuracy. This is consistent with the decoder literature.
 
 ## Install
 
